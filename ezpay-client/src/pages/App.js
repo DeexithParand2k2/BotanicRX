@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useNavigate } from 'react'
 
 /** 
  * @returns {JSX.Element} Homepage with register user and check match for exisiting user
@@ -9,7 +9,7 @@ function App() {
 
   useEffect(()=>{
 
-    const reg = localStorage.getItem("userReg")
+    const reg = sessionStorage.getItem("user")
     if(reg){
         setRegistered(true)
     }
@@ -30,13 +30,13 @@ function App() {
         {
             registered ? (
                 <>
-                    <button type="button">Check Match</button>
+                    <button style={{padding:'10px'}} type="button">Check Match</button>
                     <p>Already Registered</p>
                 </>
             ) : (
                 <>
-                    <button type="button" >Register User</button>
-                    <button type="button">Check Match</button>
+                    <button style={{padding:'10px'}} type="button">Register User</button>
+                    <button style={{padding:'10px'}} type="button">Check Match</button>
                 </>
             )  
         }
