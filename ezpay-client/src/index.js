@@ -12,7 +12,7 @@ import './index.css';
 
 //page imports
 import App from './pages/App'
-import Register from './pages/register';
+import Register from './pages/Register';
 import Match from './pages/Match'
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

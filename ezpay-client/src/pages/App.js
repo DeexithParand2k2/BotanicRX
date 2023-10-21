@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useNavigate } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router';
 
 /** 
  * @returns {JSX.Element} Homepage with register user and check match for exisiting user
@@ -6,6 +7,15 @@ import React, { useEffect, useState, useNavigate } from 'react'
 function App() {
 
   const [registered,setRegistered] = useState(false);
+  const navigate = useNavigate()
+
+  var registerHanlder = () =>{
+    navigate('/register')
+  }
+
+  var matchHanlder = () =>{
+    navigate('/match')
+  }
 
   useEffect(()=>{
 
@@ -30,13 +40,31 @@ function App() {
         {
             registered ? (
                 <>
-                    <button style={{padding:'10px'}} type="button">Check Match</button>
+                    <button 
+                        style={{padding:'10px'}} 
+                        type="button" 
+                        onClick={matchHanlder}
+                    >
+                        Check Match
+                    </button>
                     <p>Already Registered</p>
                 </>
             ) : (
                 <>
-                    <button style={{padding:'10px'}} type="button">Register User</button>
-                    <button style={{padding:'10px'}} type="button">Check Match</button>
+                    <button 
+                        style={{padding:'10px'}} 
+                        type="button" 
+                        onClick={registerHanlder}
+                    >
+                        Register User
+                    </button>
+                    <button 
+                        style={{padding:'10px'}} 
+                        type="button" 
+                        onClick={matchHanlder}
+                    >
+                        Check Match
+                    </button>
                 </>
             )  
         }
