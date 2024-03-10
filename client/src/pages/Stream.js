@@ -7,7 +7,7 @@ import Webcam from "react-webcam"
  */
 
 
-var framesLimit=20, timeGap=3;
+var framesLimit=10, timeGap=1;
 
 function Register() {
 
@@ -58,8 +58,6 @@ function Register() {
             setCapturing(false);
             setCaptured(true);
             setCamOpen(false)
-
-            // request server 
           }
           return updatedFrames;
         });
@@ -76,6 +74,7 @@ function Register() {
         sessionStorage.clear()
       }
     }
+    
   })
 
   return (

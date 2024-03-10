@@ -9,12 +9,16 @@ function App() {
   const [registered,setRegistered] = useState(false);
   const navigate = useNavigate()
 
-  var registerHanlder = () =>{
+  var streamHanlder = () =>{
     navigate('/register')
   }
 
   var matchHanlder = () =>{
     navigate('/match')
+  }
+
+  var uploadHanlder = () =>{
+    navigate('/upload')
   }
 
   useEffect(()=>{
@@ -54,9 +58,9 @@ function App() {
                     <button 
                         style={{padding:'10px'}} 
                         type="button" 
-                        onClick={registerHanlder}
+                        onClick={streamHanlder}
                     >
-                        Register User
+                        Stream Video
                     </button>
                     <button 
                         style={{padding:'10px'}} 
@@ -64,6 +68,13 @@ function App() {
                         onClick={matchHanlder}
                     >
                         Check Match
+                    </button>
+                    <button 
+                        style={{padding:'10px'}} 
+                        type="button" 
+                        onClick={uploadHanlder}
+                    >
+                        Upload Recording
                     </button>
                 </>
             )  

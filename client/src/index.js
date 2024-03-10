@@ -12,8 +12,9 @@ import './index.css';
 
 //page imports
 import App from './pages/App'
-import Register from './pages/Register';
+import Stream from './pages/Stream';
 import Match from './pages/Match'
+import Upload from './pages/Upload'
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -21,7 +22,8 @@ root.render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App/>}/>
-        <Route path="/register" element={<Register/>}/>
+        <Route path="/register" element={<Stream/>}/>
+        <Route path="/upload" element={<Upload/>} />
         <Route path="/match" element={<Match/>}/>
         <Route path="*" element={<NotFound />} />
       </Routes>
