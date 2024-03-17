@@ -74,6 +74,7 @@ function App() {
         } else {
           clearInterval(interval);
           setStreaming(false);
+          console.log('transmitted frame count size : ',capturedFrames.length)
           socket.disconnect();
         }
       }, 1000); // Stream every 1 second

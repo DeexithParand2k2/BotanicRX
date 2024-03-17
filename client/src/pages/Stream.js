@@ -1,12 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Webcam from "react-webcam"
 
-/**
- * 
- * @returns {JSX.Element} - Returns JSX element
- */
-
-
 var framesLimit=10, timeGap=1;
 
 function Register() {
@@ -19,27 +13,6 @@ function Register() {
   const [capturing,setCapturing] = useState(false) // start capture & end capture
 
   const webcamRef = useRef(null)
-
-  //start capture
-  // function startCapture(){
-  //   setCapturing(true)
-
-  //   const interval = setInterval(()=>{
-
-  //     if(frames.length>framesLimit){
-  //       clearInterval(interval)
-  //       setCapturing(false)
-  //       setCaptured(true)
-  //     }
-
-  //     if(webcamRef.current){
-  //       var currFrame = webcamRef.current.getScreenshot()
-  //       setFrames((frames)=>([...frames,currFrame]))
-  //     }
-
-  //   },timeGap*1000)
-
-  // }
 
   function startCapture() {
 
@@ -64,18 +37,6 @@ function Register() {
       }
     }, timeGap * 1000);
   }
-
-  
-  //on unmounting - remove session storage
-  useEffect(()=>{
-  
-    return() => {
-      if(captured){
-        sessionStorage.clear()
-      }
-    }
-    
-  })
 
   return (
     <div style={{
