@@ -4,7 +4,8 @@
 // const fs = require('fs');
 // const path = require('path');
 // const cors = require('cors');
-// const pako = require('pako')
+// const pako = require('pako');
+// const { exec } = require('child_process');
 
 // const app = express();
 // const server = http.createServer(app);
@@ -18,8 +19,7 @@
 // });
 
 // const PORT = process.env.PORT || 5000;
-// // const IMAGE_FOLDER = path.join(__dirname, `images-${Date.now()}`);
-// const IMAGE_FOLDER = path.join(__dirname, `prep`); 
+// const IMAGE_FOLDER = path.join(__dirname, `to_process`); 
 
 // // Create the images folder if it doesn't exist
 // if (!fs.existsSync(IMAGE_FOLDER)) {
@@ -29,6 +29,8 @@
 // // Enable CORS
 // app.use(cors());
 
+// let frameCounter = 0;
+
 // io.on('connection', (socket) => {
   
 //   // Set up event listener for receiving frames
@@ -36,16 +38,14 @@
 
 //     console.log(`Received frame from sender ${SenderIndex}`);
 
-//     // console.log('.......1',frame)
-
 //     const decompressedFrameData = pako.inflate(frame, { to: 'string' });
 
 //     // Convert base64 image to binary data
 //     const imageData = decompressedFrameData.replace(/^data:image\/png;base64,/, '');
 //     const imageBuffer = Buffer.from(imageData, 'base64');
 
-//     // Generate unique filename
-//     const filename = `frame_${Date.now()}.jpg`;
+//     // Generate unique filename with frame index
+//     const filename = `frame_${frameCounter++}_${Date.now()}.jpg`;
 //     const filePath = path.join(IMAGE_FOLDER, filename);
 
 //     // Save image to the images folder
@@ -63,7 +63,7 @@
 //   });
 // });
 
-// server.listen(PORT, ()=> {
+// server.listen(PORT, () => {
 //   console.log(`Server listening on port ${PORT}`);
 // });
 
@@ -74,7 +74,6 @@ const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
 const pako = require('pako');
-const { exec } = require('child_process');
 
 const app = express();
 const server = http.createServer(app);
@@ -88,7 +87,7 @@ const io = require("socket.io")(server, {
 });
 
 const PORT = process.env.PORT || 5000;
-const IMAGE_FOLDER = path.join(__dirname, `prep`); 
+const IMAGE_FOLDER = path.join(__dirname, `to_process`); 
 
 // Create the images folder if it doesn't exist
 if (!fs.existsSync(IMAGE_FOLDER)) {
@@ -98,14 +97,36 @@ if (!fs.existsSync(IMAGE_FOLDER)) {
 // Enable CORS
 app.use(cors());
 
+let frameQueue = [];
+let isProcessing = false;
+
+// Process frame queue
+const processFrameQueue = () => {
+  if (frameQueue.length > 0 && !isProcessing) {
+    isProcessing = true;
+    const filename = frameQueue.shift();
+    const filePath = path.join(IMAGE_FOLDER, filename);
+    
+    // Read the file content
+    fs.readFile(filePath, (err, data) => {
+      if (err) {
+        console.error('Error reading image:', err);
+      } else {
+        console.log('Sending image:', filename);
+        // Emit the file content to the clients
+        io.emit('image', { filename, data });
+      }
+      isProcessing = false;
+      processFrameQueue(); // Continue processing next frame
+    });
+  }
+};
+
 io.on('connection', (socket) => {
   
   // Set up event listener for receiving frames
   socket.on('frame', ({ frame, SenderIndex }) => {
-
     console.log(`Received frame from sender ${SenderIndex}`);
-
-    // console.log('.......1',frame)
 
     const decompressedFrameData = pako.inflate(frame, { to: 'string' });
 
@@ -113,8 +134,8 @@ io.on('connection', (socket) => {
     const imageData = decompressedFrameData.replace(/^data:image\/png;base64,/, '');
     const imageBuffer = Buffer.from(imageData, 'base64');
 
-    // Generate unique filename
-    const filename = `frame_${Date.now()}.jpg`;
+    // Generate unique filename with frame index
+    const filename = `frame_${Date.now()}.png`; // Changed to .png
     const filePath = path.join(IMAGE_FOLDER, filename);
 
     // Save image to the images folder
@@ -123,26 +144,14 @@ io.on('connection', (socket) => {
         console.error('Error saving image:', err);
       } else {
         console.log('Image saved successfully:', filename);
+        frameQueue.push(filename); // Add filename to the queue
+        processFrameQueue(); // Start processing queue
       }
     });
   });
 
   socket.on('disconnect', () => {
     console.log('Client disconnected');
-
-    // Execute the Python script
-    const pythonScriptPath = '../script/main.py'; // Replace this with the actual path to your Python script
-    exec(`python ${pythonScriptPath}`, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Error executing Python script: ${error.message}`);
-        return;
-      }
-      if (stderr) {
-        console.error(`Python script encountered an error: ${stderr}`);
-        return;
-      }
-      console.log(`Python script executed successfully: ${stdout}`);
-    });
   });
 });
 

@@ -65,6 +65,8 @@ function App() {
 
           setCapturedFrames(prevFrames => [...prevFrames, frameData]);
 
+          console.log('emit emit ..')
+
           // Send the frame to the server
           socket.emit('frame', {
             frame: compressedFrameData,
